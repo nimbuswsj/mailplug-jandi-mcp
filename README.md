@@ -1,19 +1,20 @@
 # Mailplug JANDI MCP
 
-TypeScript MCP scaffold for Mailplug email workflows and JANDI notifications. The current implementation is a safe stdio MCP scaffold with JANDI payload helpers and placeholder Mailplug tooling; live Mailplug POP3/SMTP and JANDI credentials are intentionally left for local `.env` setup later.
+Mailplug 메일 워크플로우와 JANDI 알림을 연결하기 위한 TypeScript MCP scaffold입니다. 현재 구현은 stdio MCP server와 Streamable HTTP backend를 함께 제공합니다. 실제 Mailplug POP3/SMTP 연동과 JANDI 인증 정보는 나중에 로컬 또는 서버 `.env`에서 설정하도록 의도적으로 비워 두었습니다.
 
-## Current Scope
+## 현재 범위
 
-- MCP stdio server using `@modelcontextprotocol/sdk@1.29.0`.
-- Tool names reserved for the MVP:
+- `@modelcontextprotocol/sdk@1.29.0` 기반 MCP stdio server.
+- Apache reverse proxy 뒤에서 사용할 Streamable HTTP backend (`/mcp`, `/health`).
+- MVP에서 사용할 tool 이름:
   - `mailplug_list_recent`
   - `jandi_build_message`
   - `jandi_send_message`
-- JANDI Incoming Webhook payload builder and sender.
-- Placeholder Mailplug recent-message tool that returns an empty list until credentials and POP3 behavior are approved.
-- Future-only Apache vhost examples for `mcp.nimbustech.co.kr`.
+- JANDI Incoming Webhook payload builder와 sender.
+- Mailplug 인증 정보와 POP3 동작 방식이 확정되기 전까지 빈 목록을 반환하는 placeholder recent-message tool.
+- `mcp.nimbustech.co.kr`용 Apache vhost 예시. 원격 적용은 별도 승인 후 진행합니다.
 
-## Setup
+## 설정
 
 ```bash
 npm install
@@ -22,38 +23,40 @@ npm run check
 npm run build
 ```
 
-Do not commit `.env` or any real webhook URL, Mailplug app password, token, certificate path, or secret.
+`.env`, 실제 webhook URL, Mailplug app password, token, certificate path, secret은 commit하지 마세요.
 
-## Environment
+## 환경 변수
 
 | Variable | Purpose |
 | --- | --- |
-| `MAILPLUG_EMAIL` | Mailplug mailbox address for future POP3/SMTP use. |
-| `MAILPLUG_APP_PASSWORD` | Mailplug app password for future POP3/SMTP use. |
-| `MAILPLUG_POP3_HOST` | Defaults to `pop3.mailplug.co.kr`. |
-| `MAILPLUG_POP3_PORT` | Defaults to `995`. |
-| `MAILPLUG_SMTP_HOST` | Defaults to `smtp.mailplug.co.kr`. |
-| `MAILPLUG_SMTP_PORT` | Defaults to `465`. |
-| `JANDI_WEBHOOK_URL` | JANDI Incoming Webhook URL. Fill only in local `.env`. |
-| `MCP_PUBLIC_URL` | Planned public URL, `https://mcp.nimbustech.co.kr/mcp`. |
-| `MCP_HTTP_PORT` | Future HTTP backend port, currently `8710`. |
+| `MAILPLUG_EMAIL` | 향후 POP3/SMTP 연동에 사용할 Mailplug mailbox address. |
+| `MAILPLUG_APP_PASSWORD` | 향후 POP3/SMTP 연동에 사용할 Mailplug app password. |
+| `MAILPLUG_POP3_HOST` | 기본값은 `pop3.mailplug.co.kr`. |
+| `MAILPLUG_POP3_PORT` | 기본값은 `995`. |
+| `MAILPLUG_SMTP_HOST` | 기본값은 `smtp.mailplug.co.kr`. |
+| `MAILPLUG_SMTP_PORT` | 기본값은 `465`. |
+| `JANDI_WEBHOOK_URL` | JANDI Incoming Webhook URL. 로컬 `.env`에만 입력합니다. |
+| `MCP_PUBLIC_URL` | Public URL, `https://mcp.nimbustech.co.kr/mcp`. |
+| `MCP_HTTP_PORT` | Streamable HTTP backend port, 현재 `8710`. |
 
-## Development Commands
+## 개발 명령어
 
 ```bash
-npm run dev       # run stdio MCP server locally
-npm test          # run unit tests
-npm run typecheck # TypeScript only
-npm run build     # emit dist/
+npm run dev       # 로컬 stdio MCP server 실행
+npm run dev:http  # 로컬 Streamable HTTP backend 실행
+npm test          # unit test 실행
+npm run typecheck # TypeScript 검사만 실행
+npm run build     # dist/ 출력
 npm run check     # typecheck + tests
 ```
 
-## Future Apache Vhost Plan
+## 배포 문서
 
-The target public host is `mcp.nimbustech.co.kr`. Public DNS currently resolves to the nimbus server IP from outside, but the nimbus server resolver may remain stale until DNS cache refreshes. Do not apply the vhost until DNS, certificate issuance, and deployment timing are explicitly approved.
+이 repo가 재현 가능한 배포 절차와 운영 문서의 source of truth입니다. 서버에는 live runtime file, secret, 그리고 배포 commit, enabled service, certificate 상태, 승인된 host-specific deviation 같은 non-secret live-state note만 둡니다.
 
-Example-only config lives in `deploy/apache/`. It is not a live Apache configuration and should not be copied blindly.
+- `docs/deployment.md`는 target server shape, 필요한 operator input, preflight check, HTTP/vhost 절차를 문서화합니다.
+- `docs/runbook.md`는 운영 점검, troubleshooting command, DNS check, secret handling, rollback을 문서화합니다.
+- `deploy/apache/`에는 Apache 예시가 있습니다.
+- `deploy/systemd/`에는 systemd 예시가 있습니다.
 
-## Push Readiness
-
-This repo has no remote configured yet. To push, provide the target Git remote URL and confirm whether the first branch should remain `master` or be renamed to `main`.
+`mcp.nimbustech.co.kr`의 DNS target은 `49.247.207.165`입니다. 변경 직후 resolver별 propagation/cache 지연이 있을 수 있습니다. DNS, certificate 발급, systemd 설치, Apache reload, 배포 타이밍이 명시적으로 승인되기 전까지 live server config를 적용하지 마세요. `nimbus`에 live-state note가 필요하면 `/opt/mailplug-jandi-mcp/DEPLOYMENT_STATE.md`에 server-local로 두고 모든 secret은 제외합니다.

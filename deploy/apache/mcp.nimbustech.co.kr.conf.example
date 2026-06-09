@@ -1,5 +1,5 @@
-# Example only. Do not enable without approval, DNS confirmation, and certificate setup.
-# Intended backend: MCP HTTP server bound to 127.0.0.1:8710.
+# 예시 전용입니다. 승인, DNS 확인, certificate 설정 전에는 enable하지 마세요.
+# 의도한 backend: 127.0.0.1:8710에 bind된 MCP HTTP server.
 
 <VirtualHost *:80>
     ServerName mcp.nimbustech.co.kr

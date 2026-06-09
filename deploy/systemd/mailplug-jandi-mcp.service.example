@@ -1,0 +1,27 @@
+# 예시 전용입니다. Remote HTTP deployment가 승인되기 전에는 install하지 마세요.
+# 이 template을 사용하기 전에 전용 mailplug-jandi-mcp user/group을 생성하세요.
+
+[Unit]
+Description=Mailplug JANDI MCP Server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=exec
+WorkingDirectory=/opt/mailplug-jandi-mcp
+EnvironmentFile=/opt/mailplug-jandi-mcp/.env
+ExecStart=/usr/bin/node /opt/mailplug-jandi-mcp/dist/http.js
+Restart=on-failure
+RestartSec=5
+User=mailplug-jandi-mcp
+Group=mailplug-jandi-mcp
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+RestrictSUIDSGID=true
+SystemCallArchitectures=native
+CapabilityBoundingSet=
+
+[Install]
+WantedBy=multi-user.target
