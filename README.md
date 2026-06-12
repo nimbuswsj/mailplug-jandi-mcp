@@ -56,7 +56,9 @@ npm run check     # typecheck + tests
 
 - `docs/deployment.md`는 target server shape, 필요한 operator input, preflight check, HTTP/vhost 절차를 문서화합니다.
 - `docs/runbook.md`는 운영 점검, troubleshooting command, DNS check, secret handling, rollback을 문서화합니다.
+- `docs/auth-credential-plan.md`는 public `/mcp` HTTPS 노출 전 필요한 multi-user auth, per-user credential routing, secret storage 요구사항을 문서화합니다.
+- `docs/mcp-tooling-notes.md`는 MCP SDK, `registerTool`, Zod schema, agent-facing tool metadata 작성 원칙을 문서화합니다.
 - `deploy/apache/`에는 Apache 예시가 있습니다.
 - `deploy/systemd/`에는 systemd 예시가 있습니다.
 
-`mcp.nimbustech.co.kr`의 DNS target은 `49.247.207.165`입니다. 변경 직후 resolver별 propagation/cache 지연이 있을 수 있습니다. DNS, certificate 발급, systemd 설치, Apache reload, 배포 타이밍이 명시적으로 승인되기 전까지 live server config를 적용하지 마세요. `nimbus`에 live-state note가 필요하면 `/opt/mailplug-jandi-mcp/DEPLOYMENT_STATE.md`에 server-local로 두고 모든 secret은 제외합니다.
+`mcp.nimbustech.co.kr`의 DNS target은 `49.247.207.165`입니다. 변경 직후 resolver별 propagation/cache 지연이 있을 수 있습니다. DNS, certificate 발급, systemd 설치, Apache reload, 배포 타이밍이 명시적으로 승인되기 전까지 live server config를 적용하지 마세요. Public `/mcp` HTTPS 노출은 `docs/auth-credential-plan.md`의 auth와 per-user credential routing 요구사항이 구현될 때까지 차단합니다. `nimbus`에 live-state note가 필요하면 `/opt/mailplug-jandi-mcp/DEPLOYMENT_STATE.md`에 server-local로 두고 모든 secret은 제외합니다.
