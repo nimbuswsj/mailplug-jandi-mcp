@@ -6,6 +6,8 @@
 
 현재 application은 stdio MCP server와 Streamable HTTP backend를 모두 제공합니다. HTTP backend는 `127.0.0.1:MCP_HTTP_PORT`에 bind되고 Apache TLS reverse proxy 뒤에서 사용합니다. DNS, certificate, service process가 검증되고 사용자가 승인하기 전까지 Apache vhost를 적용하거나 public-facing systemd service를 설치하지 마세요.
 
+Public `/mcp` HTTPS 노출은 [Auth와 Credential 설계 계획](./auth-credential-plan.md)의 auth, per-user credential routing, revocation, audit 요구사항이 구현되고 검증될 때까지 차단합니다. 현재 global `.env` 기반 Mailplug/JANDI 설정은 multi-user public endpoint에 적합하지 않습니다.
+
 ## 목표 구조
 
 ```text
